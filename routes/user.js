@@ -67,8 +67,8 @@ userHelpers.doSignup(req.body).then((response)=>{
  })
  router.get('/cart',verifyLogin,async(req,res)=>{
   let products=await userHelpers.getCartProducts(req.session.user._id)
-   
- res.render('user/cart',{products,user:req.session.user})
+  let totalValue=await userHelpers.getTotalAmount(req.session.user._id)
+ res.render('user/cart',{products,user:req.session.user,totalValue})
 })
 
 router.get('/add-to-cart/:id',(req,res)=>{
@@ -80,7 +80,8 @@ router.get('/add-to-cart/:id',(req,res)=>{
 })
 router.post('/change-product-quantity',(req,res)=>{
   console.log(req.body);
-  userHelpers.changeProductQuantity(req.body).then((response)=>{    // here req.body contains the data object defined in ajax
+  userHelpers.changeProductQuantity(req.body).then(async(response)=>{ 
+   response.total= await userHelpers.getTotalAmount(req.body.user)                                                                 // here req.body contains the data object defined in ajax
     res.json(response)
     
   })
@@ -92,6 +93,7 @@ router.post('/remove-cart-item',(req,res)=>{
   })
 })
 router.get('/place-order',verifyLogin,async(req,res)=>{
+  console.log('placeorder'+ req.body)
 let total=await userHelpers.getTotalAmount(req.session.user._id)
 res.render('user/placeorder',{total})
 })

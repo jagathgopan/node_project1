@@ -9,11 +9,10 @@ var objectId=require('mongodb').ObjectId
 module.exports={
     
 addProduct:(product, callback)=>{
-   
-    db.get().collection('product').insertOne(product).then((data)=>{
-     
+    product.Price=parseInt(product.Price)
+    db.get().collection('product').insertOne(product).then((data)=>{    
         callback(data.ops[0]._id)
-        product.Price=parseInt(product.Price)
+        
     })  
 },
 getAllProducts:()=>{
@@ -41,6 +40,7 @@ getProductDetails:(prodId)=>{
     })
 },
 updateProduct:(prodId,prodDetails)=>{
+    prodDetails.Price=parseInt(prodDetails.Price)
     return new promise((resolve,reject)=>{
         db.get().collection(collection.PRODUCT_COLLECTION)
         .updateOne({_id:objectId(prodId)},{
